@@ -11,5 +11,12 @@ datasets>=2.20
 # Nice rendering of dspy.Evaluate result tables
 pandas>=2.0
 
+# Observability (notebook 11): MLflow tracing + optimizer-run tracking
+mlflow>=2.21.1
+
+# Observability Option B (notebook 11): Arize Phoenix local trace UI
+arize-phoenix>=19.0
+openinference-instrumentation-dspy>=0.1.38
+
 # Dev only: used by scripts/validate_notebooks.py
 nbformat>=5.10

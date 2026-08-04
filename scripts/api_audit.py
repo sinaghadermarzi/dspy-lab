@@ -29,7 +29,8 @@ for path in sorted(ROOT.glob("[01][0-9]-*.ipynb")):
     for cell in nb.cells:
         if cell.cell_type != "code":
             continue
-        for match in re.findall(r"\bdspy(?:\.[A-Za-z_][A-Za-z_0-9]*)+", cell.source):
+        # negative lookbehind: don't match `dspy` inside dotted paths like mlflow.dspy.autolog
+        for match in re.findall(r"(?<![\w.])dspy(?:\.[A-Za-z_][A-Za-z_0-9]*)+", cell.source):
             used.add(match)
 
 import importlib
@@ -108,6 +109,33 @@ try:
     from dspy.datasets.gsm8k import GSM8K, gsm8k_metric  # noqa: F401
 except ImportError as e:
     fail(f"deep import of GSM8K failed: {e}")
+
+# --- 3. observability spot-checks (notebook 11) -----------------------------
+from dspy.utils.callback import BaseCallback
+
+hooks = [f"on_{kind}_{edge}"
+         for kind in ("module", "lm", "adapter_format", "adapter_parse", "tool", "evaluate")
+         for edge in ("start", "end")]
+for h in hooks:
+    if not hasattr(BaseCallback, h):
+        fail(f"BaseCallback lost hook {h}")
+if not hasattr(dspy, "Tool"):
+    fail("dspy.Tool missing (notebook 11, exercise 2)")
+
+try:
+    import mlflow.dspy
+    autolog_params = set(params(mlflow.dspy.autolog))
+    if not {"log_compiles", "log_evals", "log_traces_from_compile", "disable"} <= autolog_params:
+        fail(f"mlflow.dspy.autolog lost expected kwargs (has {sorted(autolog_params)})")
+except ImportError:
+    print("mlflow not installed — skipped autolog signature check")
+
+try:
+    from phoenix.otel import register
+    if "auto_instrument" not in params(register):
+        fail("phoenix.otel.register lost auto_instrument")
+except ImportError:
+    print("arize-phoenix not installed — skipped Phoenix register check")
 
 if failures:
     print(f"\n{len(failures)} FAILURES:")
