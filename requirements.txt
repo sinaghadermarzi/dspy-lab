@@ -1,5 +1,6 @@
-# Core — the version these notebooks were written against
-dspy==3.3.0
+# Core — the version these notebooks were written against.
+# The [optuna] extra is required by MIPROv2's Bayesian search (notebooks 06 and 10).
+dspy[optuna]==3.3.0
 
 # Notebook environment
 jupyterlab>=4.2
