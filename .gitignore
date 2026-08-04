@@ -13,3 +13,6 @@ artifacts/
 # Secrets & caches
 .env
 .dspy_cache/
+
+# macOS
+.DS_Store
