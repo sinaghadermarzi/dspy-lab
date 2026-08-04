@@ -1,6 +1,6 @@
 # dspy-lab — learn DSPy layer by layer
 
-A course of eleven bite-sized Jupyter notebooks that teach [DSPy](https://dspy.ai)'s abstractions from the ground up: you build a multi-hop QA program over a fictional micro-world the model has never seen, define a metric, and then watch a series of increasingly clever optimizers improve the program — reading the learned prompts at every step. The finale reruns the entire workflow on real data (HotPotQA).
+A course of twelve bite-sized Jupyter notebooks that teach [DSPy](https://dspy.ai)'s abstractions from the ground up: you build a multi-hop QA program over a fictional micro-world the model has never seen, define a metric, and then watch a series of increasingly clever optimizers improve the program — reading the learned prompts at every step. The finale reruns the entire workflow on real data (HotPotQA).
 
 Written against **DSPy 3.3.0**. Each notebook is self-contained (open any of them cold), takes 15–40 minutes, and states its own cost up front.
 
@@ -17,6 +17,7 @@ The course leans on one analogy throughout — if you know PyTorch, you already 
 | `optimizer.step()` | `teleprompter.compile(program, trainset=...)` |
 | eval loop | `dspy.Evaluate(devset=..., metric=...)` |
 | `state_dict()` | `program.save("prog.json")` — human-readable learned prompts |
+| TensorBoard / profiler | MLflow tracing (or Arize Phoenix) — notebook 11 |
 
 ## Curriculum
 
@@ -33,6 +34,7 @@ The course leans on one analogy throughout — if you know PyTorch, you already 
 | 08 | [Agents & inference-time](08-agents-and-inference-time.ipynb) | ReAct + tools; dynamic graphs; `Refine` / `BestOfN` | ~$0.05 |
 | 09 | [The optimizer landscape](09-optimizer-landscape.ipynb) | finetuning & BetterTogether; ensembles; **which optimizer when** | ~$0–0.05 |
 | 10 | [Capstone: HotPotQA](10-capstone-hotpotqa.ipynb) | the whole workflow on real data, end to end | ~$1–2 |
+| 11 | [Observability & tracing](11-observability-and-tracing.ipynb) | `BaseCallback` hooks; MLflow traces + optimizer runs; Arize Phoenix option | ~$0.05 |
 
 \* at the default model (`gpt-4o-mini` via OpenRouter). **Whole course ≈ $2.50–5.** DSPy's disk cache means re-running cells and notebooks is free.
 
@@ -58,10 +60,12 @@ or just run a notebook's config cell and paste the key when prompted. Not an Ope
 
 **Caching.** DSPy caches every LM call in `~/.dspy_cache` (on by default). Interrupting and re-running notebooks is safe and free; only genuinely new prompts cost money.
 
+**Observability (optional).** Notebook 11 teaches tracing; every other notebook's config cell ends with a commented opt-in block you can uncomment to trace that notebook. The UIs run locally in a second terminal: `mlflow ui` (from the repo root) for MLflow, or `phoenix serve` for Arize Phoenix — no accounts, no extra API keys. The `arize-phoenix` / `openinference-instrumentation-dspy` packages are only needed for the Phoenix option.
+
 ## Repo map
 
 ```
-00-…-10-….ipynb        the course
+00-…-11-….ipynb        the course
 data/corpus.json       the Aldervane micro-world: 30 fictional passages (so the LM can't cheat)
 data/qa.json           48 hand-written QA pairs — train 24 / dev 16 / test 8, with gold passage ids
 artifacts/             created at runtime by program.save() (gitignored)
