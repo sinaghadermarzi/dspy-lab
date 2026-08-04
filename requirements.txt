@@ -1,0 +1,14 @@
+# Core — the version these notebooks were written against
+dspy==3.3.0
+
+# Notebook environment
+jupyterlab>=4.2
+
+# Capstone only (notebook 10): HotPotQA via DataLoader.from_huggingface
+datasets>=2.20
+
+# Nice rendering of dspy.Evaluate result tables
+pandas>=2.0
+
+# Dev only: used by scripts/validate_notebooks.py
+nbformat>=5.10
