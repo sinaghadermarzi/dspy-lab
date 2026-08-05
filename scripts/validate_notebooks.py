@@ -61,7 +61,7 @@ def md_text(nb):
     return "\n".join(c.source for c in nb.cells if c.cell_type == "markdown")
 
 
-assert len(NOTEBOOKS) == 12, f"expected 12 notebooks, found {len(NOTEBOOKS)}"
+assert len(NOTEBOOKS) == 13, f"expected 13 notebooks, found {len(NOTEBOOKS)}"
 
 frozen = {CONFIG_SENTINEL: {}, WORLD_SENTINEL: {}, EVAL_SENTINEL: {},
           PHOENIX_SENTINEL: {}, MLFLOW_SENTINEL: {}}
@@ -100,7 +100,7 @@ for path in NOTEBOOKS:
             pos = p
     if "**What you should see" not in md:
         fail(f"{name}: no 'What you should see' callout")
-    if name[:2] != "11" and "Next up" not in md:
+    if name[:2] != "12" and "Next up" not in md:
         fail(f"{name}: missing 'Next up' teaser")
     for ch in md:
         if 0x1F000 <= ord(ch) <= 0x1FAFF:
@@ -116,8 +116,8 @@ for path in NOTEBOOKS:
         fail(f"{name}: missing required citations {sorted(missing)}")
 
 # Frozen-block identity
-if len(frozen[CONFIG_SENTINEL]) != 12:
-    fail(f"config cell present in {sorted(frozen[CONFIG_SENTINEL])} — expected all 12 notebooks")
+if len(frozen[CONFIG_SENTINEL]) != 13:
+    fail(f"config cell present in {sorted(frozen[CONFIG_SENTINEL])} — expected all 13 notebooks")
 for sentinel, found in frozen.items():
     variants = set(found.values())
     if len(variants) > 1:

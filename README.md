@@ -1,6 +1,6 @@
 # dspy-lab — learn DSPy layer by layer
 
-A course of twelve bite-sized Jupyter notebooks that teach [DSPy](https://dspy.ai)'s abstractions from the ground up: you build a multi-hop QA program over a fictional micro-world the model has never seen, define a metric, and then watch a series of increasingly clever optimizers improve the program — reading the learned prompts at every step. The finale reruns the entire workflow on real data (HotPotQA).
+A course of twelve bite-sized Jupyter notebooks — plus a bonus deep dive — that teach [DSPy](https://dspy.ai)'s abstractions from the ground up: you build a multi-hop QA program over a fictional micro-world the model has never seen, define a metric, and then watch a series of increasingly clever optimizers improve the program — reading the learned prompts at every step. The finale reruns the entire workflow on real data (HotPotQA).
 
 Written against **DSPy 3.3.0**. Each notebook is self-contained (open any of them cold), takes 15–40 minutes, and states its own cost up front.
 
@@ -35,6 +35,7 @@ The course leans on one analogy throughout — if you know PyTorch, you already 
 | 09 | [The optimizer landscape](09-optimizer-landscape.ipynb) | finetuning & BetterTogether; ensembles; **which optimizer when** | ~$0–0.05 |
 | 10 | [Capstone: HotPotQA](10-capstone-hotpotqa.ipynb) | the whole workflow on real data, end to end | ~$1–2 |
 | 11 | [Observability & tracing](11-observability-and-tracing.ipynb) | `BaseCallback` hooks; MLflow traces + optimizer runs; Arize Phoenix option | ~$0.05 |
+| 12 | [Bonus: under the LLM layer](12-bonus-llm-layer-deep-dive.ipynb) | adapters on the wire; the format-fallback ladder; `response_format` protocol; constrained decoding | < $0.01 |
 
 \* at the default model (`deepseek-v3.2` via OpenRouter). **Whole course ≈ $2.50–5** (typically less at the default). DSPy's disk cache means re-running cells and notebooks is free.
 
@@ -62,7 +63,7 @@ The defaults route through [OpenRouter](https://openrouter.ai) (one key, every m
 ## Repo map
 
 ```
-00-…-11-….ipynb        the course
+00-…-12-….ipynb        the course (12 is an optional bonus deep dive)
 .env.example           copy to .env: API key + global MODEL / STRONG_MODEL choice
 obs.py                 optional tracing helpers: dated sessions, find-or-start UIs (notebook 11)
 data/corpus.json       the Aldervane micro-world: 30 fictional passages (so the LM can't cheat)
