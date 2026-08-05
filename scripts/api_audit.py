@@ -110,6 +110,21 @@ try:
 except ImportError as e:
     fail(f"deep import of GSM8K failed: {e}")
 
+# --- 2b. LLM-layer spot-checks (bonus notebook 12) ---------------------------
+# The bonus notebook teaches the fallback ladder from source and uses one private
+# helper; both must survive a dspy bump or the notebook's cells go stale.
+if "use_json_adapter_fallback" not in params(dspy.ChatAdapter.__init__):
+    fail("ChatAdapter.__init__ lost use_json_adapter_fallback (notebook 12's ladder opt-out)")
+try:
+    from dspy.adapters.json_adapter import _get_structured_outputs_response_format
+    if not callable(_get_structured_outputs_response_format):
+        fail("_get_structured_outputs_response_format is not callable")
+except ImportError as e:
+    fail(f"private schema builder moved (notebook 12 pins it): {e}")
+for adapter in ("ChatAdapter", "JSONAdapter", "XMLAdapter", "TwoStepAdapter"):
+    if not hasattr(dspy, adapter):
+        fail(f"dspy.{adapter} missing (notebook 12 ladder/exercises)")
+
 # --- 3. observability spot-checks (notebook 11) -----------------------------
 from dspy.utils.callback import BaseCallback
 
