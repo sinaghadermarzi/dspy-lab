@@ -23,6 +23,8 @@ NOTEBOOKS = sorted(ROOT.glob("[01][0-9]-*.ipynb"))
 CONFIG_SENTINEL = "# === config (identical in every notebook) ==="
 WORLD_SENTINEL = "# === boilerplate: aldervane micro-world — same code as notebook 03 ==="
 EVAL_SENTINEL = "# === boilerplate: data + metric — same code as notebook 04 ==="
+PHOENIX_SENTINEL = "# optional: Phoenix tracing (see notebook 11)"
+MLFLOW_SENTINEL = "# optional: MLflow tracing (see notebook 11)"
 
 VERIFIED_ARXIV = {
     "2310.03714",  # DSPy compiler paper (Khattab et al.)
@@ -61,7 +63,8 @@ def md_text(nb):
 
 assert len(NOTEBOOKS) == 12, f"expected 12 notebooks, found {len(NOTEBOOKS)}"
 
-frozen = {CONFIG_SENTINEL: {}, WORLD_SENTINEL: {}, EVAL_SENTINEL: {}}
+frozen = {CONFIG_SENTINEL: {}, WORLD_SENTINEL: {}, EVAL_SENTINEL: {},
+          PHOENIX_SENTINEL: {}, MLFLOW_SENTINEL: {}}
 
 for path in NOTEBOOKS:
     name = path.name

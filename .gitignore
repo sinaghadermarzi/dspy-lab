@@ -11,7 +11,7 @@ __pycache__/
 artifacts/
 mlruns/
 mlartifacts/
-mlflow.db
+mlflow*.db*
 mydb.sqlite
 
 # Secrets & caches
