@@ -36,7 +36,7 @@ The course leans on one analogy throughout — if you know PyTorch, you already 
 | 10 | [Capstone: HotPotQA](10-capstone-hotpotqa.ipynb) | the whole workflow on real data, end to end | ~$1–2 |
 | 11 | [Observability & tracing](11-observability-and-tracing.ipynb) | `BaseCallback` hooks; MLflow traces + optimizer runs; Arize Phoenix option | ~$0.05 |
 
-\* at the default model (`gpt-4o-mini` via OpenRouter). **Whole course ≈ $2.50–5.** DSPy's disk cache means re-running cells and notebooks is free.
+\* at the default model (`deepseek-v3.2` via OpenRouter). **Whole course ≈ $2.50–5** (typically less at the default). DSPy's disk cache means re-running cells and notebooks is free.
 
 Run them in order — concepts build strictly layer by layer — but every notebook rebuilds its world from scratch, so returning to any one of them later works fine.
 
@@ -47,16 +47,13 @@ Requires Python ≥ 3.10.
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env        # then edit .env: your API key, and (optionally) your models
 jupyter lab
 ```
 
-**API key.** The notebooks default to [OpenRouter](https://openrouter.ai) (one key, every major model — handy for the "swap the model, keep the program" experiments). Create a key at openrouter.ai → Keys, then:
+**Keys & models — one `.env` for the whole course.** Every notebook's config cell reads `.env` first, so the model choice is global: set `MODEL` once and all twelve notebooks follow (`STRONG_MODEL` is the pricier model a few notebooks use as a teacher/reflection LM). No `.env`? The config cell falls back to the defaults — `openrouter/deepseek/deepseek-v3.2` and `openrouter/deepseek/deepseek-v4-flash` — and prompts for the key. A per-notebook override stays one uncomment away in each config cell (code beats `.env`).
 
-```bash
-export OPENROUTER_API_KEY=sk-or-...
-```
-
-or just run a notebook's config cell and paste the key when prompted. Not an OpenRouter user? Every notebook's config cell is one line away from any [LiteLLM provider](https://docs.litellm.ai/docs/providers) (`openai/...`, `anthropic/...`, `gemini/...`, `ollama_chat/...`); model slugs current as of authoring — check [openrouter.ai/models](https://openrouter.ai/models) if one 404s.
+The defaults route through [OpenRouter](https://openrouter.ai) (one key, every major model — handy for the "swap the model, keep the program" experiments; create a key at openrouter.ai → Keys). Any [LiteLLM provider](https://docs.litellm.ai/docs/providers) string works instead (`openai/...`, `anthropic/...`, `gemini/...`, `ollama_chat/...`); model slugs current as of authoring — check [openrouter.ai/models](https://openrouter.ai/models) if one 404s.
 
 **Caching.** DSPy caches every LM call in `~/.dspy_cache` (on by default). Interrupting and re-running notebooks is safe and free; only genuinely new prompts cost money.
 
@@ -66,6 +63,7 @@ or just run a notebook's config cell and paste the key when prompted. Not an Ope
 
 ```
 00-…-11-….ipynb        the course
+.env.example           copy to .env: API key + global MODEL / STRONG_MODEL choice
 data/corpus.json       the Aldervane micro-world: 30 fictional passages (so the LM can't cheat)
 data/qa.json           48 hand-written QA pairs — train 24 / dev 16 / test 8, with gold passage ids
 artifacts/             created at runtime by program.save() (gitignored)
