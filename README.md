@@ -57,13 +57,14 @@ The defaults route through [OpenRouter](https://openrouter.ai) (one key, every m
 
 **Caching.** DSPy caches every LM call in `~/.dspy_cache` (on by default). Interrupting and re-running notebooks is safe and free; only genuinely new prompts cost money.
 
-**Observability (optional).** Notebook 11 teaches tracing; every other notebook's config cell ends with a commented opt-in block you can uncomment to trace that notebook. Both UIs launch **from a notebook cell** (notebook 11's `launch_ui` helper) — no terminal, no accounts, no extra API keys; the only thing you do outside Jupyter is click the printed localhost link. MLflow logs to `./mlflow.db` (gitignored); Phoenix keeps its data in `~/.phoenix`. The `arize-phoenix` / `openinference-instrumentation-dspy` packages are only needed for the Phoenix option.
+**Observability (optional).** Notebook 11 teaches tracing; every other notebook carries two small optional sections right after its config cell — run the Phoenix cell or the MLflow cell (`obs.enable_phoenix()` / `obs.enable_mlflow()`) to trace that notebook, or skip both. The `obs.py` helper makes this safe to leave and return to: sessions are dated (`dspy-lab-YYYY-MM-DD`) so days never collide, the MLflow store is pinned inside the repo (gitignored) and falls back cleanly if a remnant file is unusable, and the UIs are found-or-started from a cell — reusing a healthy server, skipping ports held by strangers. No terminal, no accounts, no extra API keys; the only thing you do outside Jupyter is click the printed localhost link. Phoenix keeps its data in `~/.phoenix`.
 
 ## Repo map
 
 ```
 00-…-11-….ipynb        the course
 .env.example           copy to .env: API key + global MODEL / STRONG_MODEL choice
+obs.py                 optional tracing helpers: dated sessions, find-or-start UIs (notebook 11)
 data/corpus.json       the Aldervane micro-world: 30 fictional passages (so the LM can't cheat)
 data/qa.json           48 hand-written QA pairs — train 24 / dev 16 / test 8, with gold passage ids
 artifacts/             created at runtime by program.save() (gitignored)

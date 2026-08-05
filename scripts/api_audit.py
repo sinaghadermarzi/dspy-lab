@@ -137,6 +137,16 @@ try:
 except ImportError:
     print("arize-phoenix not installed — skipped Phoenix register check")
 
+# --- 4. the obs helper module used by the optional tracing cells ------------
+sys.path.insert(0, str(ROOT))
+try:
+    import obs
+    for fn in ("enable_mlflow", "mlflow_ui", "enable_phoenix"):
+        if not callable(getattr(obs, fn, None)):
+            fail(f"obs.{fn} missing or not callable")
+except Exception as e:
+    fail(f"import obs failed: {e}")
+
 if failures:
     print(f"\n{len(failures)} FAILURES:")
     for f in failures:
