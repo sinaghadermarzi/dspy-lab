@@ -2,6 +2,9 @@
 # The [optuna] extra is required by MIPROv2's Bayesian search (notebooks 06 and 10).
 dspy[optuna]==3.3.0
 
+# Every config cell reads .env (API key + global MODEL/STRONG_MODEL choice)
+python-dotenv>=1.0
+
 # Notebook environment
 jupyterlab>=4.2
 
