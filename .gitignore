@@ -7,8 +7,11 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# Course artifacts (created at runtime by program.save)
+# Course artifacts (created at runtime by program.save / MLflow tracing)
 artifacts/
+mlruns/
+mlartifacts/
+mydb.sqlite
 
 # Secrets & caches
 .env
