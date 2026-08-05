@@ -57,7 +57,7 @@ The defaults route through [OpenRouter](https://openrouter.ai) (one key, every m
 
 **Caching.** DSPy caches every LM call in `~/.dspy_cache` (on by default). Interrupting and re-running notebooks is safe and free; only genuinely new prompts cost money.
 
-**Observability (optional).** Notebook 11 teaches tracing; every other notebook's config cell ends with a commented opt-in block you can uncomment to trace that notebook. The UIs run locally in a second terminal: `mlflow ui` (from the repo root) for MLflow, or `phoenix serve` for Arize Phoenix — no accounts, no extra API keys. The `arize-phoenix` / `openinference-instrumentation-dspy` packages are only needed for the Phoenix option.
+**Observability (optional).** Notebook 11 teaches tracing; every other notebook's config cell ends with a commented opt-in block you can uncomment to trace that notebook. Both UIs launch **from a notebook cell** (notebook 11's `launch_ui` helper) — no terminal, no accounts, no extra API keys; the only thing you do outside Jupyter is click the printed localhost link. MLflow logs to `./mlflow.db` (gitignored); Phoenix keeps its data in `~/.phoenix`. The `arize-phoenix` / `openinference-instrumentation-dspy` packages are only needed for the Phoenix option.
 
 ## Repo map
 
