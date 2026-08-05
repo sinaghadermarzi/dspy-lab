@@ -11,8 +11,8 @@ Design notes (the robustness contract):
 - Sessions are dated: everything logs under `dspy-lab-YYYY-MM-DD`, so work from
   different days never collides in the UIs.
 - The MLflow store is pinned to `mlflow.db` next to this file (not the cwd). If a
-  remnant file from another user/process is not writable, a fresh dated store is
-  used instead — leftover files can never break a session.
+  remnant file is unusable — unwritable, corrupt, or not SQLite at all — a fresh
+  dated store is used instead: leftover files can never break a session.
 - Servers are reused when they are genuinely ours (health-checked), skipped when a
   stranger holds the port (the next port is tried), and started otherwise. Started
   servers are plain background processes: they survive kernel restarts, and
@@ -20,6 +20,7 @@ Design notes (the robustness contract):
 """
 
 import datetime
+import json
 import os
 import socket
 import sqlite3
@@ -33,22 +34,23 @@ from pathlib import Path
 TODAY = datetime.date.today().isoformat()
 EXPERIMENT = f"dspy-lab-{TODAY}"
 REPO = Path(__file__).resolve().parent
+_STORE_TAG = "dspy_lab.store"     # experiments are stamped with their store's absolute path
 
 MLFLOW_DB: Path | None = None
 
 
-def _writable_sqlite(path: Path) -> bool:
-    """True if SQLite can write at `path` (a transient lock still counts as writable)."""
+def _usable_sqlite(path: Path) -> bool:
+    """True if MLflow could use the database at `path`: writable, and really SQLite."""
     try:
         conn = sqlite3.connect(path, timeout=2)
         try:
-            conn.execute("BEGIN IMMEDIATE")   # needs write access; changes nothing
+            conn.execute("BEGIN IMMEDIATE")   # wants write access + a valid header; changes nothing
             conn.rollback()
         finally:
             conn.close()
         return True
-    except sqlite3.OperationalError as exc:
-        return not any(s in str(exc) for s in ("readonly", "unable to open"))
+    except sqlite3.Error as exc:              # readonly, unopenable, corrupt, not-a-database, ...
+        return "database is locked" in str(exc)   # ...but merely busy is a healthy store
 
 
 def _store_path() -> Path:
@@ -56,19 +58,23 @@ def _store_path() -> Path:
     global MLFLOW_DB
     if MLFLOW_DB is None:
         default = REPO / "mlflow.db"
-        if _writable_sqlite(default):
+        if _usable_sqlite(default):
             MLFLOW_DB = default
         else:
             MLFLOW_DB = REPO / f"mlflow-{TODAY}.db"
-            print(f"obs: {default.name} is not writable here; using {MLFLOW_DB.name} instead")
+            print(f"obs: {default.name} is not usable here; using {MLFLOW_DB.name} instead")
     return MLFLOW_DB
 
 
 def _ensure_experiment():
     import mlflow
 
-    mlflow.set_tracking_uri(f"sqlite:///{_store_path()}")
-    mlflow.set_experiment(EXPERIMENT)
+    store = str(_store_path())
+    mlflow.set_tracking_uri(f"sqlite:///{store}")
+    exp = mlflow.set_experiment(EXPERIMENT)
+    if exp.tags.get(_STORE_TAG) != store:               # stamp the experiment with its store,
+        mlflow.MlflowClient().set_experiment_tag(       # so a UI can prove which store it serves
+            exp.experiment_id, _STORE_TAG, store)
 
 
 def enable_mlflow():
@@ -88,7 +94,7 @@ def _port_open(port: int) -> bool:
 def _http_get(url: str, timeout: float = 3.0) -> bytes | None:
     try:
         with urllib.request.urlopen(url, timeout=timeout) as response:
-            return response.read(4096) if response.status == 200 else None
+            return response.read(65536) if response.status == 200 else None
     except Exception:
         return None
 
@@ -124,10 +130,18 @@ def mlflow_ui(port: int = 5000):
     _ensure_experiment()                                # the health check below needs it
     db = _store_path()
 
-    def is_ours(p):                                     # a UI backed by OUR store knows
-        name = urllib.parse.quote(EXPERIMENT)           # today's experiment by name
-        return _http_get(f"http://127.0.0.1:{p}/api/2.0/mlflow/experiments/get-by-name"
-                         f"?experiment_name={name}") is not None
+    def is_ours(p):                                     # ours = a UI serving OUR store: today's
+        name = urllib.parse.quote(EXPERIMENT)           # experiment must exist there AND carry
+        body = _http_get(f"http://127.0.0.1:{p}/api/2.0/mlflow/experiments/get-by-name"
+                         f"?experiment_name={name}")    # this store's path stamp — the name
+        if body is None:                                # alone could be another checkout's
+            return False                                # same-day experiment
+        try:
+            tags = json.loads(body)["experiment"].get("tags", [])
+            return any(t.get("key") == _STORE_TAG and t.get("value") == str(db)
+                       for t in tags)
+        except Exception:
+            return False
 
     def start(p):
         _spawn([sys.executable, "-m", "mlflow", "ui",
