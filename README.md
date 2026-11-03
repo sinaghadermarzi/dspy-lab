@@ -1,5 +1,9 @@
 # dspy-lab — learn DSPy layer by layer
 
+[![CI](https://github.com/sinaghadermarzi/dspy-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/sinaghadermarzi/dspy-lab/actions/workflows/ci.yml)
+[![Site](https://github.com/sinaghadermarzi/dspy-lab/actions/workflows/site.yml/badge.svg)](https://sinaghadermarzi.github.io/dspy-lab/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A course of twelve bite-sized Jupyter notebooks — plus a bonus deep dive — that teach [DSPy](https://dspy.ai)'s abstractions from the ground up: you build a multi-hop QA program over a fictional micro-world the model has never seen, define a metric, and then watch a series of increasingly clever optimizers improve the program — reading the learned prompts at every step. The finale reruns the entire workflow on real data (HotPotQA).
 
 Written against **DSPy 3.3.0**. Each notebook is self-contained (open any of them cold), takes 15–40 minutes, and states its own cost up front.
@@ -41,6 +45,8 @@ The course leans on one analogy throughout — if you know PyTorch, you already 
 
 Run them in order — concepts build strictly layer by layer — but every notebook rebuilds its world from scratch, so returning to any one of them later works fine.
 
+**Read it online:** the notebooks render as a book at [sinaghadermarzi.github.io/dspy-lab](https://sinaghadermarzi.github.io/dspy-lab/), built by `.github/workflows/site.yml` from the same files without executing them (build it locally with `pip install "jupyter-book<2" && jupyter-book build .`). The notebooks in git carry no outputs; run them with your own key to see the learned prompts and scores.
+
 ## Setup
 
 Requires Python ≥ 3.10.
@@ -72,7 +78,26 @@ artifacts/             created at runtime by program.save() (gitignored)
 scripts/check_data.py           data integrity + retrieval-guarantee checks
 scripts/validate_notebooks.py   structural/citation/frozen-block checks (no execution)
 scripts/api_audit.py            audits every dspy.* symbol used against the installed dspy
+tests/                          pytest: runs the three scripts + unit tests for obs.py
+_config.yml, _toc.yml           Jupyter Book site definition (.github/workflows/site.yml)
 ```
+
+## Checks
+
+Nothing below executes a notebook or calls an LM, so it all runs without a key:
+
+```bash
+python scripts/validate_notebooks.py   # nbformat validity, cell syntax, frozen blocks, citations
+python scripts/check_data.py           # micro-world invariants and retrieval guarantees
+python scripts/api_audit.py            # every dspy.* name used still resolves on the pinned dspy
+python -m pytest tests -q              # the three above, plus unit tests for obs.py
+```
+
+`.github/workflows/ci.yml` runs the same four steps on every push and pull request. Executing the notebooks end to end is deliberately not in CI: it needs an OpenRouter key and costs money.
+
+## License
+
+MIT — see [LICENSE](LICENSE). To cite the course, use [CITATION.cff](CITATION.cff).
 
 ## Coming from older DSPy tutorials?
 

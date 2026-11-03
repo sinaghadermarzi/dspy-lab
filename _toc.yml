@@ -1,0 +1,25 @@
+# Table of contents for the Jupyter Book site (see _config.yml).
+format: jb-book
+root: README
+parts:
+  - caption: "Part 1. The building blocks"
+    chapters:
+      - file: 00-hello-dspy
+      - file: 01-signatures-and-predict
+      - file: 02-under-the-hood-parameters
+      - file: 03-modules-and-the-graph
+      - file: 04-data-and-evaluation
+  - caption: "Part 2. Optimizers"
+    chapters:
+      - file: 05-bootstrap-fewshot
+      - file: 06-instruction-optimization-miprov2
+      - file: 07-feedback-and-gepa
+      - file: 08-agents-and-inference-time
+      - file: 09-optimizer-landscape
+  - caption: "Part 3. Capstone and tooling"
+    chapters:
+      - file: 10-capstone-hotpotqa
+      - file: 11-observability-and-tracing
+  - caption: "Bonus"
+    chapters:
+      - file: 12-bonus-llm-layer-deep-dive
