@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this course or the Aldervane micro-world, please cite it as below."
+title: "dspy-lab: learn DSPy layer by layer"
+type: software
+authors:
+  - family-names: Ghadermarzi
+    given-names: Sina
+repository-code: "https://github.com/sinaghadermarzi/dspy-lab"
+license: MIT
+version: 0.1.0
+date-released: 2026-11-03
+keywords:
+  - dspy
+  - prompt-optimization
+  - llm
+  - course
+  - jupyter
+  - multi-hop-qa
+abstract: >-
+  A course of thirteen Jupyter notebooks that teaches DSPy 3.x layer by layer
+  through a PyTorch analogy: a multi-hop QA program over a hand-built fictional
+  micro-world (Aldervane), a metric, and then BootstrapFewShot, MIPROv2, GEPA,
+  ReAct, tracing with MLflow and Phoenix, and a HotPotQA capstone.

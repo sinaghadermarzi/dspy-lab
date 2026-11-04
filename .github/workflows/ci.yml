@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: notebook validator, data checks, API audit, tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install the course stack (dspy 3.3.0 pin plus the dev extras)
+        run: |
+          uv venv .venv --python 3.12
+          uv pip install -p .venv/bin/python -r requirements.txt pytest
+
+      - name: Static notebook validation (no execution, no network)
+        run: .venv/bin/python scripts/validate_notebooks.py
+
+      - name: Micro-world data invariants
+        run: .venv/bin/python scripts/check_data.py
+
+      - name: dspy API audit (imports only, no LM calls)
+        run: .venv/bin/python scripts/api_audit.py
+        env:
+          MLFLOW_DISABLE_AGENT_HINT: "1"
+
+      - name: Unit tests
+        run: .venv/bin/python -m pytest tests -q
